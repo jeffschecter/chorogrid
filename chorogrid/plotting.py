@@ -68,6 +68,8 @@ STATE_ABBREVS = {
     "WASHINGTON DC": "DC"
 }
 
+HEXILE_LABELS = ["- - -", "- -", "-", "+", "++", "+++"]
+
 
 def _get_state(state):
     state = state.replace(", ", "").replace(".", " ").upper().strip()
@@ -77,11 +79,13 @@ def _get_state(state):
 def plot(
         states, values, title="", legend="",
         colors=DEFAULT_COLORS, complements=DEFAULT_COMPLEMENTS,
-        font={}, spacing={}, decimals=1, shape="hex"):
+        font={}, spacing={}, decimals=1, shape="hex", quantile=False):
     states = [_get_state(state) for state in states]
     states, values = zip(*[
         (state, value) for state, value in zip(states, values)
         if state in STATE_ABBREVS.values()])
+    if quantile:
+        values = pd.qcut(values, 6, [-20, -10, -1, 1, 10, 20])
 
     # Colors
     cbin = Colorbin(values, colors, proportional=True, decimals=None)
@@ -92,7 +96,11 @@ def plot(
     # Choropleth
     cg = Chorogrid(SPEC_PATH, states, cbin.colors_out)
     cg.set_title(title, font_dict=font)
-    cg.set_legend(cbin.colors_in, cbin.labels, title=legend)
+    if quantile:
+        labels = HEXILE_LABELS
+    else:
+        labels = cbin.labels
+    cg.set_legend(cbin.colors_in, labels, title=legend)
 
     # Draw
     draw_fn = {
