@@ -5,4 +5,4 @@
 
 from chorogrid.Colorbin import Colorbin
 from chorogrid.Chorogrid import Chorogrid
-from chorogrid.plot import plot
+from chorogrid.plotting import plot

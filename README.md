@@ -1,6 +1,11 @@
 # chorogrid
 A python script to produce choropleths and colored square- and hex-grid maps
 
+```
+import chorogrid
+chorogrid.plot(df.state, df.metric, title="Title", legend="Legend", shape="hex")
+```
+
 Examples:
 
 ![Examples](https://raw.githubusercontent.com/Prooffreader/chorogrid/master/examples.png "Examples")

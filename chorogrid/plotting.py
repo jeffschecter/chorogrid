@@ -13,6 +13,7 @@ SPEC_PATH = os.path.join(
     os.path.dirname(os.path.realpath(__file__)),
     "databases", "usa_states.csv")
 
+
 STATE_ABBREVS = {
     "ALABAMA": "AL",
     "ALASKA": "AK",
@@ -78,12 +79,15 @@ def plot(
         colors=DEFAULT_COLORS, complements=DEFAULT_COMPLEMENTS,
         font={}, spacing={}, decimals=1, shape="hex"):
     states = [_get_state(state) for state in states]
+    states, values = zip(*[
+        (state, value) for state, value in zip(states, values)
+        if state in STATE_ABBREVS.values()])
 
     # Colors
     cbin = Colorbin(values, colors, proportional=True, decimals=None)
     cbin.set_decimals(decimals)
     cbin.recalc(fenceposts=True)
-    cbin.calc_complements(0.5, *complements)
+    cbin.calc_complements(0.0, *complements)
 
     # Choropleth
     cg = Chorogrid(SPEC_PATH, states, cbin.colors_out)
