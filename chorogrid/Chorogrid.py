@@ -1,6 +1,8 @@
 #!/usr/bin/python
 # Filename: Chorogrid.py
 
+from __future__ import print_function
+
 import xml.etree.ElementTree as ET
 import pandas as pd
 import re
@@ -39,8 +41,8 @@ class Chorogrid(object):
            done: save and/or display the result in IPython notebook
            done_with_overlay: overlay two Chorogrid objects
     """
-    def __init__(self, csv_path, ids, colors, id_column='abbrev'):
-        self.df = pd.read_csv(csv_path)
+    def __init__(self, df, ids, colors, id_column='state'):
+        self.df = df
         comparison_set = set(self.df[id_column])
         invalid = set(ids).difference(comparison_set)
         missing = comparison_set.difference(set(ids))
