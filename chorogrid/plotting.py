@@ -1,3 +1,4 @@
+import math
 import os
 
 import pandas as pd
@@ -10,7 +11,6 @@ from chorogrid import Chorogrid
 DEFAULT_COLORS = [
     '#b35806', '#f1a340', '#fee0b6', '#d8daeb', '#998ec3', '#542788']
 DEFAULT_COMPLEMENTS = ['#e0e0e0', '#101010']
-HEXILE_LABELS = ["- - -", "- -", "-", "+", "++", "+++"]
 
 
 # Data files
@@ -80,11 +80,31 @@ STATE_ABBREVS = {
     "WASHINGTON DC": "DC"
 }
 
+# ---------------------------------------------------------------------------- #
+# Helpers.                                                                     #
+# ---------------------------------------------------------------------------- #
 
 def _get_state(state):
     state = state.replace(", ", "").replace(".", " ").upper().strip()
     return STATE_ABBREVS.get(state, state)
 
+
+def _quantile_labels(n):
+    midpoint = (n / 2.0) - 1
+    labels = []
+    for i in range(n):
+        if i < midpoint:
+            labels.append("- " * int(math.ceil(midpoint) - i))
+        elif i == midpoint:
+            labels.append("avg")
+        elif i > midpoint:
+            labels.append("+" * int(i - math.floor(midpoint)))
+    return labels
+
+
+# ---------------------------------------------------------------------------- #
+# Plotting functions.                                                          #
+# ---------------------------------------------------------------------------- #
 
 def plot_states(
         states, values, title="", legend="",
@@ -107,7 +127,7 @@ def plot_states(
     cg = Chorogrid(STATE_FILEPATH, states, cbin.colors_out)
     cg.set_title(title, font_dict=font)
     if quantile:
-        labels = HEXILE_LABELS
+        labels = _quantile_labels(len(colors))
     else:
         labels = cbin.labels
     cg.set_legend(cbin.colors_in, labels, title=legend)
@@ -147,7 +167,7 @@ def plot_counties(
         id_column="fips_integer")
     cg.set_title(title, font_dict=font)
     if quantile:
-        labels = HEXILE_LABELS
+        labels = _quantile_labels(len(colors))
     else:
         labels = cbin.labels
     cg.set_legend(cbin.colors_in, labels, title=legend)
@@ -160,6 +180,10 @@ def plot_counties(
         cg.add_svg(statelines)
     return cg.done(show=True)
 
+
+# ---------------------------------------------------------------------------- #
+# Public API.                                                                  #
+# ---------------------------------------------------------------------------- #
 
 def plot(labels, values, **kwargs):
     state_labels = set(STATE_ABBREVS.keys()) | set(STATE_ABBREVS.values())

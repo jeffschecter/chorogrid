@@ -6,3 +6,4 @@
 from chorogrid.Colorbin import Colorbin
 from chorogrid.Chorogrid import Chorogrid
 from chorogrid.plotting import plot
+from zipcodes_df import zipcodes
