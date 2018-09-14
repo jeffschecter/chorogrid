@@ -4,7 +4,8 @@ A python script to produce choropleths and colored square- and hex-grid maps
 ```
 import chorogrid
 chorogrid.plot(df.state, df.metric, title="Title", legend="Legend", shape="hex")
-chorogrid.plot_counties(df.fips, df.metric, title="Title", legend="Legend")
+chorogrid.plot(df.county_fips, df.metric, title="Title", legend="Legend")
+df.plot.choropleth("county_fips", "metric")
 
 ```
 

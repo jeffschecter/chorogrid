@@ -6,9 +6,14 @@ from chorogrid import Colorbin
 from chorogrid import Chorogrid
 
 
+# Colors and appearance
 DEFAULT_COLORS = [
     '#b35806', '#f1a340', '#fee0b6', '#d8daeb', '#998ec3', '#542788']
 DEFAULT_COMPLEMENTS = ['#e0e0e0', '#101010']
+HEXILE_LABELS = ["- - -", "- -", "-", "+", "++", "+++"]
+
+
+# Data files
 STATE_FILEPATH = os.path.join(
     os.path.dirname(os.path.realpath(__file__)),
     "databases", "usa_states.csv")
@@ -16,6 +21,9 @@ COUNTY_FILEPATH = os.path.join(
     os.path.dirname(os.path.realpath(__file__)),
     "databases", "usa_counties.csv")
 COUNTY_IDS = set(pd.read_csv(COUNTY_FILEPATH).fips_integer.unique())
+STATELINES_FILEPATH = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)),
+    "databases", "usa_counties_statelines.txt")
 
 
 STATE_ABBREVS = {
@@ -72,15 +80,13 @@ STATE_ABBREVS = {
     "WASHINGTON DC": "DC"
 }
 
-HEXILE_LABELS = ["- - -", "- -", "-", "+", "++", "+++"]
-
 
 def _get_state(state):
     state = state.replace(", ", "").replace(".", " ").upper().strip()
     return STATE_ABBREVS.get(state, state)
 
 
-def plot(
+def plot_states(
         states, values, title="", legend="",
         colors=DEFAULT_COLORS, complements=DEFAULT_COMPLEMENTS,
         font={}, spacing={}, decimals=1, shape="hex", quantile=False):
@@ -121,7 +127,8 @@ def plot(
 def plot_counties(
         fips, values, title="", legend="",
         colors=DEFAULT_COLORS, complements=DEFAULT_COMPLEMENTS,
-        font={}, spacing={}, decimals=1, quantile=False):
+        font={}, spacing={}, decimals=1,
+        quantile=False, statelines=False):
     fips, values = zip(*[
         (fip, value) for fip, value in zip(fips, values)
         if fip in COUNTY_IDS])
@@ -147,4 +154,23 @@ def plot_counties(
 
     # Draw
     cg.draw_map(spacing_dict=spacing)
+    if statelines:
+        with open(STATELINES_FILEPATH, 'r') as f:
+            statelines = f.read()
+        cg.add_svg(statelines)
     return cg.done(show=True)
+
+
+def plot(labels, values, **kwargs):
+    state_labels = set(STATE_ABBREVS.keys()) | set(STATE_ABBREVS.values())
+    if len(set(labels) & state_labels) > 0:
+        return plot_states(labels, values, **kwargs)
+    else:
+        return plot_counties(labels, values, **kwargs)
+
+
+def _pd_plot_choropleth(self, x, y, **kwargs):
+    return plot(self._data[x], self._data[y], **kwargs)
+
+
+pd.DataFrame.plot.choropleth = _pd_plot_choropleth
