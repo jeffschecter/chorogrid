@@ -90,7 +90,7 @@ def _get_state(state):
 
 
 def _quantile_labels(n):
-    midpoint = (n / 2.0) - 1
+    midpoint = (n - 1) / 2.0
     labels = []
     for i in range(n):
         if i < midpoint:

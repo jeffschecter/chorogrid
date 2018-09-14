@@ -526,8 +526,8 @@ class Chorogrid(object):
                         'missing_color': '#a0a0a0',
                         'legend_offset': [0, 0]}           
         """
-        spacing_dict = {'map_width': 959, 
-                        'map_height': 593,
+        spacing_dict = {'map_width': 800, 
+                        'map_height': 550,
                         'margin_left': 10,  
                         'margin_top': 20,  
                         'margin_right': 80,  
@@ -536,7 +536,7 @@ class Chorogrid(object):
                         'stroke_color': '#ffffff', 
                         'stroke_width': 0.5, 
                         'missing_color': '#a0a0a0',
-                        'legend_offset': [0, 0]}        
+                        'legend_offset': [-100, -100]}        
         spacing_dict = self._update_default_dict(spacing_dict, 
                                                  'spacing_dict', kwargs) 
         total_width = (spacing_dict['map_width'] + 
