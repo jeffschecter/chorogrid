@@ -41,17 +41,18 @@ class Chorogrid(object):
            done: save and/or display the result in IPython notebook
            done_with_overlay: overlay two Chorogrid objects
     """
-    def __init__(self, csv_path, ids, colors, id_column='abbrev'):
+    def __init__(self, csv_path, ids, colors, id_column='abbrev', warn=False):
         self.df = pd.read_csv(csv_path)
         comparison_set = set(self.df[id_column])
         invalid = set(ids).difference(comparison_set)
         missing = comparison_set.difference(set(ids))
-        if len(invalid) > 0:
-            print('WARNING: The following are not recognized'
-                  ' ids: {}'.format(invalid), file=sys.stderr)
-        if len(missing) > 0:
-            print('WARNING: The following ids in the csv are not '
-                  'included: {}'.format(missing), file=sys.stderr)
+        if warn:
+          if len(invalid) > 0:
+              print('WARNING: The following are not recognized'
+                    ' ids: {}'.format(invalid), file=sys.stderr)
+          if len(missing) > 0:
+              print('WARNING: The following ids in the csv are not '
+                    'included: {}'.format(missing), file=sys.stderr)
         self.colors = list(colors)
         self.ids = list(ids)
         self.svglist = []
